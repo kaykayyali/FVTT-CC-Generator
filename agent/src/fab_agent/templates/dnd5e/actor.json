@@ -1,0 +1,129 @@
+{
+  "name": "Vaelen Kett",
+  "type": "npc",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "abilities": {
+      "str": { "value": 10 },
+      "dex": { "value": 14 },
+      "con": { "value": 12 },
+      "int": { "value": 11 },
+      "wis": { "value": 13 },
+      "cha": { "value": 14 }
+    },
+    "attributes": {
+      "hp": { "value": 22, "max": 22, "temp": 0 },
+      "ac": { "flat": 13, "calc": "default" },
+      "init": { "ability": "dex" },
+      "movement": { "walk": 30, "fly": 0, "swim": 0, "climb": 0, "burrow": 0 }
+    },
+    "details": {
+      "race": "Half-elf",
+      "alignment": "chaotic neutral",
+      "type": { "value": "humanoid", "subtype": "half-elf" },
+      "level": { "value": 1, "min": 0, "max": 0 },
+      "cr": 0.25,
+      "biography": {
+        "value": "<p>Runs the Drowned Lantern, a dockside smuggler's tavern.</p>",
+        "public": ""
+      }
+    },
+    "traits": {
+      "size": "med",
+      "languages": { "value": ["Common", "Elvish"] },
+      "di": { "value": [] },
+      "dr": { "value": [] },
+      "dv": { "value": [] },
+      "ci": { "value": [] }
+    },
+    "skills": {
+      "per": { "value": 0, "ability": "wis" },
+      "dec": { "value": 0, "ability": "cha" },
+      "slt": { "value": 0, "ability": "dex" }
+    },
+    "currency": { "pp": 0, "gp": 47, "ep": 0, "sp": 12, "cp": 0 },
+    "spells": {},
+    "bonuses": {}
+  },
+  "items": [
+    {
+      "name": "Leather armor",
+      "type": "equipment",
+      "img": "icons/equipment/chest/vest-leather-brown.webp",
+      "system": {
+        "armor": { "value": 11, "dex": null, "type": "light" },
+        "equipped": true,
+        "rarity": "common",
+        "identified": true
+      }
+    },
+    {
+      "name": "Short sword",
+      "type": "weapon",
+      "img": "icons/weapons/swords/shortsword-guard-brown.webp",
+      "system": {
+        "damage": { "parts": [["piercing", "1d6", "finesse"]], "versatile": "" },
+        "range": { "value": 5, "long": null, "reach": null, "units": "ft" },
+        "weaponType": "simpleM",
+        "rarity": "common",
+        "identified": true,
+        "equipped": true
+      }
+    }
+  ],
+  "flags": {
+    "fvtt-cc-generator": {
+      "npcSheetUuid": "JournalEntry.xxxxxxxx",
+      "linkedAt": 1718000000000
+    }
+  },
+  "ownership": { "default": 1 },
+  "prototypeToken": {
+    "name": "Vaelen Kett",
+    "displayName": 20,
+    "actorLink": false,
+    "width": 1,
+    "height": 1,
+    "lockRotation": false,
+    "rotation": 0,
+    "alpha": 1,
+    "disposition": 0,
+    "displayBars": 0,
+    "bar1": { "attribute": "attributes.hp" },
+    "bar2": { "attribute": null },
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "dim": 0,
+      "attenuation": 0.5,
+      "luminosity": 0.5,
+      "saturation": 0,
+      "contrast": 0,
+      "shadows": 0,
+      "animation": {
+        "type": null,
+        "speed": 5,
+        "intensity": 5,
+        "reverse": false
+      },
+      "darkness": { "min": 0, "max": 1 }
+    },
+    "sight": {
+      "enabled": false,
+      "range": 0,
+      "angle": 360,
+      "visionMode": "basic",
+      "color": null,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "saturation": 0,
+      "contrast": 0
+    },
+    "detectionModes": [],
+    "flags": {},
+    "randomImg": false
+  }
+}

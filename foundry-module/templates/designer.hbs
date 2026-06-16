@@ -1,0 +1,73 @@
+{{!-- AI Designer — main form --}}
+<form class="fab-designer-form" autocomplete="off">
+  <div class="form-group">
+    <label for="fab-sheet-type">{{localize "FAB.Designer.SheetType"}}</label>
+    <select id="fab-sheet-type" name="sheetType">
+      {{#each sheetTypes}}
+        <option value="{{this.value}}">{{this.label}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="fab-prompt">{{localize "FAB.Designer.Prompt"}}</label>
+    <textarea
+      id="fab-prompt"
+      name="prompt"
+      rows="4"
+      placeholder="{{localize 'FAB.Designer.PromptPlaceholder'}}"></textarea>
+  </div>
+
+  <div class="fab-actions">
+    <button type="button" id="fab-design-btn" class="fab-btn fab-btn-primary">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      {{localize "FAB.Designer.Design"}}
+    </button>
+    <button type="button" id="fab-link-existing-btn" class="fab-btn">
+      <i class="fas fa-link"></i>
+      {{localize "FAB.Designer.LinkExisting"}}
+    </button>
+  </div>
+
+  <div id="fab-parent-display" class="fab-parent-display"></div>
+
+  <div class="form-group fab-thinking-group">
+    <label>{{localize "FAB.Designer.Thinking"}}</label>
+    <div id="fab-thinking" class="fab-thinking"></div>
+  </div>
+
+  <div class="form-group fab-preview-group">
+    <label>{{localize "FAB.Designer.Preview"}}</label>
+    <div id="fab-preview-pane" class="fab-preview-pane"></div>
+  </div>
+
+  <div id="fab-refine-section" class="fab-refine">
+    <div class="form-group">
+      <label for="fab-refine-input">{{localize "FAB.Designer.RefinePrompt"}}</label>
+      <textarea
+        id="fab-refine-input"
+        rows="2"
+        placeholder="{{localize 'FAB.Designer.RefinePlaceholder'}}"></textarea>
+    </div>
+    <div class="fab-actions">
+      <button type="button" id="fab-refine-btn" class="fab-btn">
+        <i class="fas fa-pen"></i>
+        {{localize "FAB.Designer.Refine"}}
+      </button>
+      <button type="button" id="fab-commit-btn" class="fab-btn fab-btn-primary">
+        <i class="fas fa-check"></i>
+        {{localize "FAB.Designer.Commit"}}
+      </button>
+    </div>
+  </div>
+
+  <div class="fab-status">
+    <small>
+      {{localize "FAB.Designer.AgentStatus"}}: <code>{{agentStatus}}</code>
+      {{#if hasContext}}
+        · <i class="fas fa-database"></i> {{localize "FAB.Designer.WorldLoaded"}}
+      {{/if}}
+      · {{localize "FAB.Designer.Port"}}: <code>{{port}}</code>
+    </small>
+  </div>
+</form>

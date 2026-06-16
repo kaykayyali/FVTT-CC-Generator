@@ -1,0 +1,36 @@
+{
+  "name": "Salt-Etched Spyglass",
+  "type": "equipment",
+  "img": "icons/tools/scribal/spectator-glasses-steel.webp",
+  "system": {
+    "description": {
+      "value": "<p>A brass spyglass with a salt-etched casing. Once per long rest, the wielder can use it to <strong>detect illusion magic</strong> within 60 ft (DC 13 Wisdom check). 100 ft. range.</p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "source": "Saltcliff Reward",
+    "quantity": 1,
+    "weight": { "value": 1, "units": "lb" },
+    "price": { "value": 50, "denomination": "gp" },
+    "rarity": "uncommon",
+    "identified": true,
+    "attunement": false,
+    "equipped": false,
+    "armor": { "value": null },
+    "container": null,
+    "crewed": false,
+    "formula": "",
+    "damage": { "parts": [] },
+    "range": { "value": null, "units": "ft" },
+    "weaponType": "none",
+    "proficient": true
+  },
+  "effects": [],
+  "flags": {
+    "fvtt-cc-generator": {
+      "draftSheetUuid": "JournalEntry.xxxxxxxx",
+      "draftSheetType": "shop"
+    }
+  },
+  "ownership": { "default": 0 }
+}

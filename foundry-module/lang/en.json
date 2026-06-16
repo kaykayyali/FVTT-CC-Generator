@@ -1,0 +1,61 @@
+{
+  "FAB": {
+    "Settings": {
+      "agentPort": {
+        "Name": "Agent Port",
+        "Hint": "WebSocket port the local FAB agent listens on (default 7777)."
+      },
+      "agentToken": {
+        "Name": "Agent Token",
+        "Hint": "Shared secret for authenticating the Foundry module to the local agent. Must match the FAB_AGENT_TOKEN env var on the agent side."
+      },
+      "autoCommit": {
+        "Name": "Auto-Commit",
+        "Hint": "If enabled, generated drafts are committed to the world without showing a preview. Use with care."
+      },
+      "defaultModel": {
+        "Name": "Default Model",
+        "Hint": "Optional LLM model override. Empty = use the agent's default. Examples: anthropic/claude-sonnet-4-20250514, openai/gpt-4o."
+      },
+      "sidebarOpened": {
+        "Name": "Sidebar Opened"
+      }
+    },
+    "Designer": {
+      "Title": "AI Designer (Campaign Codex)",
+      "SheetType": "Sheet type",
+      "Prompt": "Describe what you want to create",
+      "PromptPlaceholder": "Example: A smuggler's tavern in a port city, run by a half-elf who lost a hand to the guard captain...",
+      "Design": "Design",
+      "Designing": "Designing...",
+      "Refine": "Refine",
+      "RefinePlaceholder": "Suggest a change to the current draft...",
+      "Commit": "Commit to world",
+      "LinkExisting": "Link to existing...",
+      "AgentStatus": {
+        "Connected": "Connected to local agent",
+        "Disconnected": "Not connected — start the agent (uv run fab-agent)",
+        "Connecting": "Connecting..."
+      },
+      "Errors": {
+        "NotConnected": "Cannot reach the local agent. See console for details.",
+        "NoCC": "Campaign Codex is not enabled. The AI Designer requires it.",
+        "InvalidResponse": "The agent returned an invalid response. See console.",
+        "NoPrompt": "Please describe what you want to create."
+      }
+    },
+    "SheetType": {
+      "location": "Location",
+      "npc": "NPC",
+      "region": "Region",
+      "shop": "Shop",
+      "group": "Group / Faction",
+      "quest": "Quest"
+    },
+    "LinkPicker": {
+      "Title": "Link to existing sheet",
+      "Search": "Search...",
+      "NoResults": "No matching sheets found."
+    }
+  }
+}

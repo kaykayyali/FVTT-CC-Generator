@@ -1,0 +1,57 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+*.whl
+
+# uv
+uv.lock
+.uv-cache/
+
+# Node (in case someone adds a JS bundler later)
+node_modules/
+.npm/
+.yarn/
+
+# Foundry module build artifacts
+foundry-module/dist/
+foundry-module/release/
+*.zip
+
+# Local config
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Agent runtime
+agent/.fab-sessions/
+agent/.cache/

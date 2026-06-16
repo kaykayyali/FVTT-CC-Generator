@@ -1,0 +1,11 @@
+{
+  "name": "Overview",
+  "type": "text",
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "flags": {},
+  "text": {
+    "format": 1,
+    "content": "<h2>The Drowned Lantern</h2>\n<p>A low-beamed dockside tavern lit by bioluminescent jellyfish tanks. The owner lost a hand to the city guard and now runs a smuggling operation out of the cellar.</p>\n<h3>Notable Denizens</h3>\n<ul>\n  <li><strong>Vaelen Kett</strong> \u2014 innkeeper, smuggler. See @UUID[JournalEntry.vaelen-uuid]{Vaelen Kett}.</li>\n  <li><strong>Old Maren</strong> \u2014 bouncer, ex-naval.</li>\n</ul>\n<h3>Rumors</h3>\n<ul>\n  <li>They say the lanterns in the cellar never go out, even when you snuff them.</li>\n  <li>Vaelen pays the guard captain in gold, not coin.</li>\n</ul>"
+  }
+}
