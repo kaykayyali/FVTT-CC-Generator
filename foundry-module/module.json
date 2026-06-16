@@ -2,10 +2,11 @@
   "id": "fvtt-cc-generator",
   "title": "FVTT-CC-Generator",
   "description": "AI-powered Campaign Codex content generator. Talk to a local Hermes-powered agent over WebSocket to author CC sheets (location, npc, region, shop, group, quest) with compendium-search-first reuse of existing items and actors. Requires the Campaign Codex module to be installed.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": {
     "minimum": "12",
-    "tested": "14"
+    "tested": "14",
+    "notes": "Requires the Campaign Codex module (>=3.8.0) to be enabled in the world. Designed for Foundry v14 with dnd5e system."
   },
   "authors": [
     {
@@ -50,6 +51,5 @@
   "download": "https://github.com/kaykayyali/FVTT-CC-Generator/releases/latest/download/fvtt-cc-generator.zip",
   "readme": "https://github.com/kaykayyali/FVTT-CC-Generator/blob/main/README.md",
   "bugs": "https://github.com/kaykayyali/FVTT-CC-Generator/issues",
-  "license": "MIT",
-  "compatibility.notes": "Requires the Campaign Codex module to be enabled in the world. Designed for Foundry v14 with dnd5e system."
+  "license": "MIT"
 }
