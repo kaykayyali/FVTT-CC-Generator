@@ -56,12 +56,21 @@ def _normalise_tags(v: Any) -> List[str]:
 
 
 def _coerce_str_list(v: Any) -> List[str]:
+    """Coerce a list-of-strings field, dropping blanks and None."""
     if v is None:
         return []
     if isinstance(v, str):
-        return [v] if v.strip() else []
+        s = v.strip()
+        return [s] if s else []
     if isinstance(v, (list, tuple)):
-        return [str(x) for x in v if x is not None]
+        out: List[str] = []
+        for x in v:
+            if x is None:
+                continue
+            s = str(x).strip()
+            if s:
+                out.append(s)
+        return out
     return []
 
 
@@ -167,13 +176,13 @@ class LocationDraft(_Base):
     img: Optional[str] = None
     folder: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
-    _norm_linked_npcs = field_validator("linkedNpcs")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_shops = field_validator("linkedShops")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_quests = field_validator("linkedQuests")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_locs = field_validator("linkedLocations")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_rumors = field_validator("rumors")(lambda cls, v: _coerce_str_list(v))
-    _norm_secrets = field_validator("secrets")(lambda cls, v: _coerce_str_list(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
+    _norm_linked_npcs = field_validator("linkedNpcs", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_shops = field_validator("linkedShops", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_quests = field_validator("linkedQuests", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_locs = field_validator("linkedLocations", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_rumors = field_validator("rumors", mode="before")(lambda cls, v: _coerce_str_list(v))
+    _norm_secrets = field_validator("secrets", mode="before")(lambda cls, v: _coerce_str_list(v))
 
 
 class NPCDraft(_Base):
@@ -198,9 +207,9 @@ class NPCDraft(_Base):
     hidden: bool = False
     img: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
-    _norm_linked_npcs = field_validator("linkedNpcs")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_quests = field_validator("linkedQuests")(lambda cls, v: _coerce_uuid_list(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
+    _norm_linked_npcs = field_validator("linkedNpcs", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_quests = field_validator("linkedQuests", mode="before")(lambda cls, v: _coerce_uuid_list(v))
 
 
 class RegionDraft(_Base):
@@ -220,10 +229,10 @@ class RegionDraft(_Base):
     hidden: bool = False
     img: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
-    _norm_linked_locs = field_validator("linkedLocations")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_npcs = field_validator("linkedNpcs")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_quests = field_validator("linkedQuests")(lambda cls, v: _coerce_uuid_list(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
+    _norm_linked_locs = field_validator("linkedLocations", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_npcs = field_validator("linkedNpcs", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_quests = field_validator("linkedQuests", mode="before")(lambda cls, v: _coerce_uuid_list(v))
 
 
 class ShopDraft(_Base):
@@ -245,9 +254,9 @@ class ShopDraft(_Base):
     hidden: bool = False
     img: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
 
-    @field_validator("buyMultiplier", "sellMultiplier")
+    @field_validator("buyMultiplier", "sellMultiplier", mode="before")
     @classmethod
     def _non_negative(cls, v: float) -> float:
         try:
@@ -276,13 +285,13 @@ class GroupDraft(_Base):
     hidden: bool = False
     img: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
-    _norm_goals = field_validator("goals")(lambda cls, v: _coerce_str_list(v))
-    _norm_resources = field_validator("resources")(lambda cls, v: _coerce_str_list(v))
-    _norm_allies = field_validator("allies")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_enemies = field_validator("enemies")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_npcs = field_validator("linkedNpcs")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_locs = field_validator("linkedLocations")(lambda cls, v: _coerce_uuid_list(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
+    _norm_goals = field_validator("goals", mode="before")(lambda cls, v: _coerce_str_list(v))
+    _norm_resources = field_validator("resources", mode="before")(lambda cls, v: _coerce_str_list(v))
+    _norm_allies = field_validator("allies", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_enemies = field_validator("enemies", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_npcs = field_validator("linkedNpcs", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_locs = field_validator("linkedLocations", mode="before")(lambda cls, v: _coerce_uuid_list(v))
 
 
 class QuestDraft(_Base):
@@ -304,11 +313,11 @@ class QuestDraft(_Base):
     hidden: bool = False
     img: Optional[str] = None
 
-    _normalise_tags = field_validator("tags")(lambda cls, v: _normalise_tags(v))
-    _norm_rewards = field_validator("rewards")(lambda cls, v: _coerce_str_list(v))
-    _norm_linked_npcs = field_validator("linkedNpcs")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_locs = field_validator("linkedLocations")(lambda cls, v: _coerce_uuid_list(v))
-    _norm_linked_items = field_validator("linkedItems")(lambda cls, v: _coerce_uuid_list(v))
+    _normalise_tags = field_validator("tags", mode="before")(lambda cls, v: _normalise_tags(v))
+    _norm_rewards = field_validator("rewards", mode="before")(lambda cls, v: _coerce_str_list(v))
+    _norm_linked_npcs = field_validator("linkedNpcs", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_locs = field_validator("linkedLocations", mode="before")(lambda cls, v: _coerce_uuid_list(v))
+    _norm_linked_items = field_validator("linkedItems", mode="before")(lambda cls, v: _coerce_uuid_list(v))
 
 
 # -----------------------------------------------------------------------------#
@@ -389,10 +398,16 @@ def validate_draft(
 
     normalised = model.model_dump(exclude_none=True, by_alias=False)
 
-    # Extra checks not easily expressed in Pydantic.
+    # Extra checks not easily expressed in Pydantic. Every issue we
+    # surface goes into ``errors`` so callers see one list, but each
+    # message is tagged with a severity:
+    #   "error"   - draft is NOT shippable (valid: False)
+    #   "warning" - draft is shippable but could be better (valid: True)
+    # This is what the LLM-facing handler relies on: an imperfect
+    # draft is still shippable; only a broken one is not.
     if sheet_type == "location":
         if not (normalised.get("type") or "").strip():
-            errors.append("location.type is recommended (tavern, settlement, ...)")
+            errors.append("location.type is recommended (tavern, settlement, ...) [warning]")
     if sheet_type == "shop":
         inv = normalised.get("inventory") or []
         for i, item in enumerate(inv):
@@ -401,15 +416,19 @@ def validate_draft(
             if item.get("linkToCompendium") and not item.get("compendiumUuid"):
                 errors.append(
                     f"shop.inventory[{i}].linkToCompendium is true but "
-                    f"compendiumUuid is missing"
+                    f"compendiumUuid is missing [warning]"
                 )
     if sheet_type == "npc":
         if not (normalised.get("motivation") or "").strip():
-            errors.append("npc.motivation is recommended (what they want)")
+            errors.append("npc.motivation is recommended (what they want) [warning]")
 
+    # Split into hard errors and soft warnings. Hard errors fail
+    # validation; soft warnings don't.
+    hard_errors = [e for e in errors if "[warning]" not in e]
     return {
-        "valid": len(errors) == 0,
+        "valid": len(hard_errors) == 0,
         "errors": errors,
+        "warnings": [e for e in errors if "[warning]" in e],
         "normalized": normalised,
     }
 

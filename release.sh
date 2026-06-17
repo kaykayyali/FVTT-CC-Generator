@@ -47,6 +47,19 @@ echo "  module: ${MODULE_JSON}"
 echo "  zip:    ${ZIP_PATH}"
 echo ""
 
+# Pre-release test gate. The release script refuses to publish if any
+# test suite is failing. To bypass (e.g. for a docs-only release), pass
+# --skip-tests.
+if [ "${SKIP_TESTS:-0}" = "1" ]; then
+    echo -e "  ⚠ test gate skipped (--skip-tests)"
+else
+    echo "  Running test gate..."
+    if ! bash "${REPO_ROOT}/test-all.sh" --skip-agent; then
+        echo "  ✗ pre-release test gate failed; aborting"
+        exit 1
+    fi
+fi
+
 # Detect repo from git remote
 REMOTE_URL=$(git config --get remote.origin.url)
 # e.g. https://github.com/owner/repo.git  or  git@github.com:owner/repo.git
