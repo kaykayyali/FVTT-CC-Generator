@@ -1,12 +1,13 @@
 {
   "id": "fvtt-cc-generator",
   "title": "FVTT-CC-Generator",
-  "description": "AI-powered Campaign Codex content generator. Talk to a local Hermes-powered agent over WebSocket to author CC sheets (location, npc, region, shop, group, quest) with compendium-search-first reuse of existing items and actors. Requires the Campaign Codex module to be installed.",
-  "version": "0.1.1",
+  "description": "AI-powered Campaign Codex content generator. A wrapper Foundry module that talks to a local Hermes-powered Python agent over WebSocket, producing structured Campaign Codex sheets (location, npc, region, shop, group, quest) \u2014 with compendium-search-first reuse of existing items and actors from the dnd5e SRD. Requires the Campaign Codex module to be installed.",
+  "version": "0.1.2",
+  "library": false,
+  "manifestPlusVersion": "1.2.0",
   "compatibility": {
-    "minimum": "12",
-    "tested": "14",
-    "notes": "Requires the Campaign Codex module (>=3.8.0) to be enabled in the world. Designed for Foundry v14 with dnd5e system."
+    "minimum": 12,
+    "verified": 14
   },
   "authors": [
     {
@@ -27,7 +28,7 @@
     ],
     "requires": []
   },
-  "scripts": [
+  "esmodules": [
     "scripts/main.js"
   ],
   "styles": [
@@ -36,20 +37,35 @@
   "languages": [
     {
       "lang": "en",
+      "name": "English",
       "path": "lang/en.json"
     }
   ],
   "flags": {
     "hotReload": {
-      "scripts": true,
-      "styles": true
+      "extensions": [
+        "css",
+        "hbs",
+        "json"
+      ],
+      "paths": [
+        "templates",
+        "lang"
+      ]
     }
   },
-  "socket": false,
   "url": "https://github.com/kaykayyali/FVTT-CC-Generator",
-  "manifest": "https://raw.githubusercontent.com/kaykayyali/FVTT-CC-Generator/main/foundry-module/module.json",
-  "download": "https://github.com/kaykayyali/FVTT-CC-Generator/releases/latest/download/fvtt-cc-generator.zip",
+  "manifest": "https://github.com/kaykayyali/FVTT-CC-Generator/releases/latest/download/module.json",
+  "download": "https://github.com/kaykayyali/FVTT-CC-Generator/releases/download/v0.1.2/fvtt-cc-generator.zip",
+  "license": "https://github.com/kaykayyali/FVTT-CC-Generator/blob/main/LICENSE",
   "readme": "https://github.com/kaykayyali/FVTT-CC-Generator/blob/main/README.md",
+  "changelog": "https://github.com/kaykayyali/FVTT-CC-Generator/releases",
   "bugs": "https://github.com/kaykayyali/FVTT-CC-Generator/issues",
-  "license": "MIT"
+  "media": [
+    {
+      "type": "icon",
+      "url": "https://raw.githubusercontent.com/kaykayyali/FVTT-CC-Generator/main/foundry-module/assets/icon.png"
+    }
+  ],
+  "socket": false
 }
