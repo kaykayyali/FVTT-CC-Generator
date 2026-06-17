@@ -2,7 +2,7 @@
   "id": "fvtt-cc-generator",
   "title": "FVTT-CC-Generator",
   "description": "AI-powered Campaign Codex content generator. A wrapper Foundry module that talks to a local Hermes-powered Python agent over WebSocket, producing structured Campaign Codex sheets (location, npc, region, shop, group, quest) \u2014 with compendium-search-first reuse of existing items and actors from the dnd5e SRD. Requires the Campaign Codex module to be installed.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "library": false,
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
