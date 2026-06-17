@@ -61,8 +61,9 @@ skip_suite() {
     SKIPPED=$((SKIPPED + 1))
 }
 
-# 1. Manifest validator
-run_suite "Manifest validator" "python3 tests/test_module_manifest.py"
+# 1. Manifest validator (uses the project-shipped script which is the
+#    same one referenced by the foundry-vtt-v14-modules SKILL.md)
+run_suite "Manifest validator" "python3 scripts/validate-module-json.py"
 
 # 2. JS syntax check
 run_suite "JS syntax check" "python3 tests/test_js_syntax.py"
