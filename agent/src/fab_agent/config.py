@@ -74,8 +74,8 @@ class FabConfig(BaseSettings):
 
     # --- Server --------------------------------------------------------------
     agent_host: str = Field(
-        default="127.0.0.1",
-        description="Interface the WebSocket server binds to. Loopback by default.",
+        default="0.0.0.0",
+        description="Interface the WebSocket server binds to. Default 0.0.0.0 (all interfaces) so Tailscale and other overlays can reach it. Set to 127.0.0.1 to restrict to loopback only.",
     )
     agent_port: int = Field(
         default=7777,
@@ -121,16 +121,7 @@ class FabConfig(BaseSettings):
     @field_validator("agent_host")
     @classmethod
     def _validate_host(cls, v: str) -> str:
-        v = (v or "").strip() or "127.0.0.1"
-        # A few obvious mistakes.
-        if v in {"0.0.0.0", "::"}:
-            log.warning(
-                "fab-agent is binding to %s — the loopback-only auth model "
-                "assumes %s. Do not expose this port to the network without "
-                "adding TLS and a real auth layer.",
-                v,
-                "127.0.0.1",
-            )
+        v = (v or "").strip() or "0.0.0.0"
         return v
 
     @field_validator("agent_token")

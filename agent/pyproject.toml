@@ -1,6 +1,6 @@
 [project]
 name = "fab-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local WebSocket agent that powers the FVTT-CC-Generator Foundry VTT v14 module. Streams AI-generated Campaign Codex sheets (location, npc, region, shop, group, quest) into a Foundry module preview/commit flow."
 authors = [
   { name = "Hermes Agent" },

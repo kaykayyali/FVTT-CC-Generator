@@ -6,7 +6,7 @@ This is the only file that talks to the wire. The architecture is:
         |
         v
     _connection_handler(ws)
-        |   1. validate `Sec-WebSocket-Protocol: fab.v1.token=<token>`
+        |   1. (no auth in v0.2.x — see commit history)
         |   2. enter a `while True` loop reading JSON frames
         |   3. route by `type` to one of the handlers in handlers.py
         |   4. send the response, or schedule streaming pushes
@@ -19,9 +19,12 @@ design handlers maintain their own per-session state inside
 ``state.sessions``.
 
 ``websockets`` v12+ exposes both the high-level coroutine API and the
-``process_request`` hook for subprotocol negotiation. We use the
-high-level API and read the subprotocol out of the handshake response
-headers (``ws.request_headers.get('Sec-WebSocket-Protocol')``).
+``process_request`` hook. v0.2.x has no auth check — any client that
+can complete the WebSocket upgrade can talk to the agent. Operators
+are expected to run the agent behind a firewall or overlay network
+(Tailscale, Cloudflare Tunnel, etc.). The original Sec-WebSocket-
+Protocol-based token check was removed because the WS spec forbids
+``=`` and ``.`` in subprotocol names.
 """
 
 from __future__ import annotations
@@ -62,10 +65,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from websockets.legacy.server import WebSocketServerProtocol
 
 log = logging.getLogger(__name__)
-
-# The expected Sec-WebSocket-Protocol prefix. The JS client sends
-# `fab.v1.token=<token>`; we strip the prefix and compare the token.
-PROTOCOL_PREFIX = "fab.v1.token="
 
 # Heartbeat: if we don't see a frame from the client within this many
 # seconds, close the socket. Keeps idle sessions from leaking.
@@ -173,17 +172,16 @@ def _make_connection_handler(state: ServerState):
 
 
 async def _connection_loop(state: ServerState, ws) -> None:
-    """Validate the handshake and run the per-connection message loop."""
+    """Run the per-connection message loop.
+
+    v0.2.x: no auth check. Any client that can complete the WebSocket
+    handshake can talk to the agent. Security is intentionally deferred
+    (see docs/wiki/troubleshooting.md and the project roadmap). The
+    agent is meant to run on a machine the operator controls, behind
+    a firewall or overlay network (Tailscale, Cloudflare Tunnel, etc.).
+    """
     remote = _remote_address(ws)
     log.info("connect from %s", remote)
-
-    # --- Token validation --------------------------------------------------
-    token = _extract_token(ws)
-    expected = state.config.agent_token
-    if not token or token != expected:
-        log.warning("rejecting %s: bad token", remote)
-        await _safe_close(ws, code=1008, reason="invalid token")
-        return
 
     # --- Welcome banner ---------------------------------------------------
     log.info(
@@ -415,42 +413,6 @@ def _remote_address(ws) -> str:
     if isinstance(addr, tuple) and len(addr) == 2:
         return f"{addr[0]}:{addr[1]}"
     return str(addr)
-
-
-def _extract_token(ws) -> Optional[str]:
-    """Pull ``fab.v1.token=<token>`` out of the Sec-WebSocket-Protocol header.
-
-    The websockets library surfaces the chosen subprotocol on
-    ``ws.subprotocol`` after the handshake completes; for a server we
-    can also inspect the raw request headers. We try both.
-    """
-    subprotocol = getattr(ws, "subprotocol", None)
-    if subprotocol and subprotocol.startswith(PROTOCOL_PREFIX):
-        return subprotocol[len(PROTOCOL_PREFIX):]
-
-    # Fallback: parse the request headers directly. Legacy websockets
-    # exposes them on `ws.request_headers`; asyncio websockets hides them
-    # behind a method.
-    headers = getattr(ws, "request_headers", None)
-    if headers is None:
-        getter = getattr(ws, "request_headers", None) or getattr(ws, "headers", None)
-        if callable(getter):
-            try:
-                headers = getter()
-            except Exception:
-                headers = None
-    if headers is not None:
-        try:
-            value = headers.get("Sec-WebSocket-Protocol")
-        except Exception:
-            value = None
-        if value:
-            # The header may be a comma-separated list of subprotocols.
-            for part in str(value).split(","):
-                part = part.strip()
-                if part.startswith(PROTOCOL_PREFIX):
-                    return part[len(PROTOCOL_PREFIX):]
-    return None
 
 
 def _resolve_serve_api():

@@ -1,13 +1,9 @@
 {
   "FAB": {
     "Settings": {
-      "agentPort": {
-        "Name": "Agent Port",
-        "Hint": "WebSocket port the local FAB agent listens on (default 7777)."
-      },
-      "agentToken": {
-        "Name": "Agent Token",
-        "Hint": "Shared secret for authenticating the Foundry module to the local agent. Must match the FAB_AGENT_TOKEN env var on the agent side."
+      "agentUrl": {
+        "Name": "Agent WebSocket URL",
+        "Hint": "Full WebSocket URL of the local AI agent. Default ws://127.0.0.1:7777/ws/v1 (browser and agent on the same machine). For remote Foundry (Docker, VPS, The Forge) point this at a Tailscale IP, tunnel, or other reachable host."
       },
       "autoCommit": {
         "Name": "Auto-Commit",

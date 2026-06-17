@@ -1,7 +1,12 @@
 /**
  * WebSocket client for the local Hermes-powered agent.
  *
- * Wraps the browser's native `WebSocket` API and provides:
+ * v0.2.x: takes a full WebSocket URL (no port+token, no auth header).
+ * Any client that can complete the WS handshake is accepted by the agent.
+ * The URL is operator-configurable so the browser can reach an agent
+ * running on a different machine over a Tailscale / tunnel / LAN.
+ *
+ * Provides:
  *   - request/response correlation via per-call IDs
  *   - pub/sub for server-pushed events (design.thinking, design.preview, ...)
  *   - automatic single-shot reconnection if the socket drops unexpectedly
@@ -10,20 +15,16 @@
  *   client -> server (request):   { id, type, payload }
  *   server -> client (response):  { id, type, ok, result, error? }
  *   server -> client (push):      { type, sessionId?, ... }
- *
- * The token is sent via `Sec-WebSocket-Protocol: fab.v1.token=<token>` per
- * constants.js, and the agent validates it server-side.
  */
 
-import { WS_PATH, WS_PROTOCOL_PREFIX } from "./constants.js";
+import { WS_RECONNECT_DELAY_MS } from "./constants.js";
 
 export class WsClient {
   /**
-   * @param {{ port: number, token: string }} options
+   * @param {{ url: string }} options
    */
-  constructor({ port, token } = {}) {
-    this.port = Number(port) || 0;
-    this.token = String(token ?? "");
+  constructor({ url } = {}) {
+    this.url = String(url ?? "");
     /** @type {?WebSocket} */
     this.ws = null;
     this._idCounter = 0;
@@ -50,6 +51,10 @@ export class WsClient {
   connect() {
     this._wantOpen = true;
 
+    if (!this.url) {
+      return Promise.reject(new Error("No agent URL configured"));
+    }
+
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       return Promise.resolve();
     }
@@ -61,13 +66,10 @@ export class WsClient {
       });
     }
 
-    const url = `ws://127.0.0.1:${this.port}${WS_PATH}`;
-    const protocol = `${WS_PROTOCOL_PREFIX}${this.token}`;
-
     return new Promise((resolve, reject) => {
       let ws;
       try {
-        ws = new WebSocket(url, [protocol]);
+        ws = new WebSocket(this.url);
       } catch (err) {
         this._wantOpen = false;
         reject(err);
@@ -137,8 +139,8 @@ export class WsClient {
         console.warn(`fvtt-cc-generator | Reconnect failed: ${err?.message ?? err}`);
         try {
           ui.notifications?.warn?.(
-            `FVTT-CC-Generator: Lost connection to the local agent (code ${ev.code}). ` +
-            `Check that the agent is running.`
+            `FVTT-CC-Generator: Lost connection to the agent at ${this.url} (code ${ev.code}). ` +
+            `Check that the agent is running and reachable.`
           );
         } catch (_) { /* ignore */ }
       });

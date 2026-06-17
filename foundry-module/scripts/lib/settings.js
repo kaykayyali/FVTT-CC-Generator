@@ -1,14 +1,13 @@
 /**
  * Module settings for FVTT-CC-Generator.
  *
- * Registers the five configuration entries used by the rest of the module and
- * exposes a single `getSettings()` getter for ergonomic reads.
+ * v0.2.x: collapsed `agentPort` + `agentToken` into a single `agentUrl`
+ * setting. The agent has no auth in this version (security is deferred
+ * per the project roadmap), so the module only needs the URL.
  *
- * i18n keys (translation file should provide these):
- *   FAB.Settings.agentPort.Name
- *   FAB.Settings.agentPort.Hint
- *   FAB.Settings.agentToken.Name
- *   FAB.Settings.agentToken.Hint
+ * i18n keys:
+ *   FAB.Settings.agentUrl.Name
+ *   FAB.Settings.agentUrl.Hint
  *   FAB.Settings.autoCommit.Name
  *   FAB.Settings.autoCommit.Hint
  *   FAB.Settings.defaultModel.Name
@@ -17,36 +16,25 @@
  *   FAB.Settings.sidebarOpened.Hint
  */
 
-import { MODULE_ID, AGENT_DEFAULT_PORT, AGENT_DEFAULT_TOKEN } from "./constants.js";
+import { MODULE_ID, AGENT_DEFAULT_URL } from "./constants.js";
 
 /**
  * Register all module settings. Call once from the `init` hook.
  */
 export function registerSettings() {
-  // --- agentPort -------------------------------------------------------------
-  // WebSocket port the local agent listens on. World-scope so all clients
-  // agree on the same endpoint.
-  game.settings.register(MODULE_ID, "agentPort", {
-    name: "FAB.Settings.agentPort.Name",
-    hint: "FAB.Settings.agentPort.Hint",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: AGENT_DEFAULT_PORT,
-    range: { min: 1024, max: 65535, step: 1 },
-    requiresReload: false,
-  });
-
-  // --- agentToken ------------------------------------------------------------
-  // Shared secret. Must match the value the agent validates against
-  // `Sec-WebSocket-Protocol: fab.v1.token=<token>`.
-  game.settings.register(MODULE_ID, "agentToken", {
-    name: "FAB.Settings.agentToken.Name",
-    hint: "FAB.Settings.agentToken.Hint",
+  // --- agentUrl -------------------------------------------------------------
+  // Full WebSocket URL the browser should connect to. The operator
+  // (typically a GM) sets this. For local-only setups the default
+  // (ws://127.0.0.1:7777/ws/v1) works. For remote Foundry (Docker,
+  // VPS, The Forge) the operator points it at something the browser
+  // can actually reach — e.g. a Tailscale IP, a tunnel, etc.
+  game.settings.register(MODULE_ID, "agentUrl", {
+    name: "FAB.Settings.agentUrl.Name",
+    hint: "FAB.Settings.agentUrl.Hint",
     scope: "world",
     config: true,
     type: String,
-    default: AGENT_DEFAULT_TOKEN,
+    default: AGENT_DEFAULT_URL,
   });
 
   // --- autoCommit ------------------------------------------------------------
@@ -89,8 +77,7 @@ export function registerSettings() {
  * Read all module settings as a single ergonomic object.
  *
  * @returns {{
- *   port: number,
- *   token: string,
+ *   url: string,
  *   autoCommit: boolean,
  *   model: string,
  *   sidebarOpened: boolean
@@ -98,10 +85,22 @@ export function registerSettings() {
  */
 export function getSettings() {
   return {
-    port: Number(game.settings.get(MODULE_ID, "agentPort")) || AGENT_DEFAULT_PORT,
-    token: String(game.settings.get(MODULE_ID, "agentToken") ?? AGENT_DEFAULT_TOKEN),
+    url: String(game.settings.get(MODULE_ID, "agentUrl") ?? AGENT_DEFAULT_URL),
     autoCommit: Boolean(game.settings.get(MODULE_ID, "autoCommit")),
     model: String(game.settings.get(MODULE_ID, "defaultModel") ?? ""),
     sidebarOpened: Boolean(game.settings.get(MODULE_ID, "sidebarOpened")),
   };
+}
+
+/**
+ * Validate that a string looks like a WebSocket URL we can connect to.
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isValidAgentUrl(url) {
+  if (typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  if (!/^wss?:\/\//i.test(trimmed)) return false;
+  return true;
 }

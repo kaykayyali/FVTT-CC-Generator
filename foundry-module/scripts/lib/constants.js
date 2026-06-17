@@ -5,16 +5,17 @@
 
 export const MODULE_ID = "fvtt-cc-generator";
 
-/** Default port the local agent listens on (must match agent's default). */
-export const AGENT_DEFAULT_PORT = 7777;
+/**
+ * Default WebSocket URL the module tries on first launch.
+ *
+ * Loopback (127.0.0.1) only works when the agent runs on the same
+ * machine as the browser. For remote Foundry (Docker, VPS, The Forge)
+ * operators set the URL to something their browser can reach — e.g.
+ * a Tailscale IP (`ws://100.x.y.z:7777`) or a tunnel.
+ */
+export const AGENT_DEFAULT_URL = "ws://127.0.0.1:7777/ws/v1";
 
-/** Default shared-secret token. Users change this in module settings. */
-export const AGENT_DEFAULT_TOKEN = "change-me-in-module-settings";
-
-/** WebSocket protocol identifier (used in Sec-WebSocket-Protocol). */
-export const WS_PROTOCOL_PREFIX = "fab.v1.token=";
-
-/** WebSocket path on the agent server. */
+/** WebSocket path on the agent server (must match the agent's listener). */
 export const WS_PATH = "/ws/v1";
 
 /** Sheet types the agent can generate. Must match campaign-codex-sheets. */
@@ -39,3 +40,9 @@ export const SHEET_TYPE_ICONS = {
   group: "fa-users",
   quest: "fa-scroll",
 };
+
+/**
+ * Default auto-reconnect interval (ms) when the WebSocket drops.
+ * Set high enough that we don't busy-loop on a dead endpoint.
+ */
+export const WS_RECONNECT_DELAY_MS = 3000;
