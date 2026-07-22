@@ -65,7 +65,10 @@ skip_suite() {
 #    same one referenced by the foundry-vtt-v14-modules SKILL.md)
 run_suite "Manifest validator" "python3 scripts/validate-module-json.py"
 
-# 2. JS syntax check
+# 2. Manifest loader contract regression
+run_suite "Manifest loader contract" "python3 tests/test_manifest_loader_contract.py"
+
+# 3. JS syntax check
 run_suite "JS syntax check" "python3 tests/test_js_syntax.py"
 
 if [ "${SKIP_AGENT}" = "1" ]; then
@@ -81,11 +84,13 @@ else
         skip_suite "Agent unit tests" "agent venv missing"
         skip_suite "WS roundtrip" "agent venv missing"
     else
-        # 3. Agent unit tests
-        run_suite "Agent unit tests" "cd ${REPO_ROOT}/agent && .venv/Scripts/python.exe -m pytest tests/"
+        # 4. Agent unit tests. Isolated mode prevents a caller's PYTHONPATH
+        #    (for example Hermes's own venv) from contaminating this venv.
+        run_suite "Agent unit tests" "cd ${REPO_ROOT}/agent && .venv/Scripts/python.exe -I -X utf8 -m pytest tests/"
 
-        # 4. WS roundtrip
-        run_suite "WS roundtrip" "${AGENT_VENV} ${REPO_ROOT}/tests/test_ws_protocol.py"
+        # 5. WS roundtrip — use the same environment isolation and force
+        #    UTF-8 so Unicode diagnostics work under Windows CP1252 shells.
+        run_suite "WS roundtrip" "${AGENT_VENV} -I -X utf8 ${REPO_ROOT}/tests/test_ws_protocol.py"
     fi
 fi
 

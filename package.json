@@ -1,0 +1,12 @@
+{
+  "name": "fvtt-cc-generator-tests",
+  "private": true,
+  "version": "0.2.2",
+  "type": "module",
+  "scripts": {
+    "test:foundry": "node tests/test_foundry_loader.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}

@@ -32,6 +32,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import List, NamedTuple, Tuple
@@ -60,6 +62,7 @@ REQUIRED_KEYS = (
 # rejected by Foundry's schema and the module's compatibility badge
 # shows "unknown" instead of green.
 KEY_PATTERN = re.compile(r"^[a-z][a-zA-Z]*$")
+NODE_EXECUTABLE = shutil.which("node") or shutil.which("node.exe")
 
 # Compatibility block required keys
 REQUIRED_COMPAT_KEYS = ("minimum", "verified")
@@ -83,6 +86,42 @@ def _is_url(s: str) -> bool:
     return bool(re.match(r"^https?://[^\s]+$", s))
 
 
+def _node_syntax_check(
+    source: str, input_type: str
+) -> subprocess.CompletedProcess[str]:
+    if NODE_EXECUTABLE is None:
+        raise RuntimeError("Node.js is not available")
+    return subprocess.run(
+        [NODE_EXECUTABLE, f"--input-type={input_type}", "--check"],
+        input=source,
+        capture_output=True,
+        text=True,
+        timeout=10,
+        check=False,
+    )
+
+
+def _contains_static_module_syntax(source: str) -> bool | None:
+    """Use Node's parser to identify source valid only in module mode."""
+    if NODE_EXECUTABLE is None:
+        return None
+    classic = _node_syntax_check(source, "commonjs")
+    if classic.returncode == 0:
+        return False
+    module = _node_syntax_check(source, "module")
+    if module.returncode == 0:
+        return True
+    diagnostic = classic.stderr
+    return any(
+        marker in diagnostic
+        for marker in (
+            "Cannot use import statement outside a module",
+            "Cannot use 'import.meta' outside a module",
+            "Unexpected token 'export'",
+        )
+    )
+
+
 def _is_kebab(s: str) -> bool:
     return bool(re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", s))
 
@@ -92,7 +131,7 @@ def _is_semver(s: str) -> bool:
     return bool(re.match(r"^\d+\.\d+\.\d+(-[A-Za-z0-9.]+)?(\+[A-Za-z0-9.]+)?$", s))
 
 
-def validate_manifest(m: dict) -> List[Issue]:
+def validate_manifest(m: dict, manifest_path: Path | None = None) -> List[Issue]:
     issues: List[Issue] = []
 
     # --- Top-level structure -----------------------------------------------
@@ -216,6 +255,29 @@ def validate_manifest(m: dict) -> List[Issue]:
             "use esmodules so the file loads as an ES module with import/export"
         ))
 
+    if manifest_path is not None:
+        for entry in m.get("scripts", []):
+            if not isinstance(entry, str):
+                continue
+            entry_path = manifest_path.parent / entry
+            if not entry_path.is_file():
+                continue
+            source = entry_path.read_text(encoding="utf-8", errors="replace")
+            module_syntax = _contains_static_module_syntax(source)
+            if module_syntax is None:
+                issues.append(Issue(
+                    "warning",
+                    f"could not inspect classic script entry '{entry}' for module-only syntax — "
+                    "Node.js was not found on PATH"
+                ))
+            elif module_syntax:
+                issues.append(Issue(
+                    "error",
+                    f"classic script entry '{entry}' contains static import/export syntax — "
+                    "Foundry will parse it outside a module. Move the entry from "
+                    "'scripts' to 'esmodules' or emit a classic-script bundle."
+                ))
+
     # --- media (icon) ------------------------------------------------------
 
     if "media" not in m:
@@ -273,7 +335,7 @@ def main() -> int:
         print(f"ERROR: {path} is not valid JSON: {e}", file=sys.stderr)
         return 2
 
-    issues = validate_manifest(m)
+    issues = validate_manifest(m, path)
 
     if args.json:
         out = {

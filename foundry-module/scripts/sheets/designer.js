@@ -92,7 +92,7 @@ export class DesignerApp extends HandlebarsApplicationMixin(foundry.applications
       hasContext,
       sheetTypeLabel: SHEET_TYPE_LABELS,
       sheetTypeIcon: SHEET_TYPE_ICONS,
-      port: settings.port,
+      agentUrl: settings.url,
     };
   }
 
@@ -397,9 +397,9 @@ export class DesignerApp extends HandlebarsApplicationMixin(foundry.applications
     if (this._client && this._client.ws?.readyState === WebSocket.OPEN) {
       return this._client;
     }
-    const { port, token } = getSettings();
+    const { url } = getSettings();
     if (this._client) this._client.close();
-    this._client = new WsClient({ port, token });
+    this._client = new WsClient({ url });
     this._clientInitStarted = true;
     await this._client.connect();
     try {

@@ -254,6 +254,7 @@ export class WsClient {
    * @returns {Promise<{ok:boolean, agent:?string, version:?string, model:?string, raw:object}>}
    */
   async hello() {
+    await this.connect();
     const res = await this._send("hello", {});
     // Server response shape: { type: "hello.result", ok: true, result: { agent, version, model }, ... }
     const result = res?.result ?? {};
